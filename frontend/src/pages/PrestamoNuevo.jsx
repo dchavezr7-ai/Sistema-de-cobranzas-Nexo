@@ -5,12 +5,9 @@ import { soles, fecha, hoyLima } from '../lib/fmt';
 
 const redondear = (x) => Math.round((x + Number.EPSILON) * 100) / 100;
 
-// Igual que PostgreSQL: si el día no existe en el mes destino, usa el último día
-function sumarMeses(iso, n) {
+function sumarDias(iso, n) {
   const [y, m, d] = iso.split('-').map(Number);
-  const t = new Date(Date.UTC(y, m - 1 + n, 1));
-  const ultimo = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 0)).getUTCDate();
-  t.setUTCDate(Math.min(d, ultimo));
+  const t = new Date(Date.UTC(y, m - 1, d + n));
   return t.toISOString().slice(0, 10);
 }
 
