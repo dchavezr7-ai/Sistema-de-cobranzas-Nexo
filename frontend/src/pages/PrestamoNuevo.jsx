@@ -5,12 +5,10 @@ import { soles, fecha, hoyLima } from '../lib/fmt';
 
 const redondear = (x) => Math.round((x + Number.EPSILON) * 100) / 100;
 
-// Igual que PostgreSQL: si el día no existe en el mes destino, usa el último día
-function sumarMeses(iso, n) {
+// Suma n días exactos a una fecha ISO (YYYY-MM-DD)
+function sumarDias(iso, n) {
   const [y, m, d] = iso.split('-').map(Number);
-  const t = new Date(Date.UTC(y, m - 1 + n, 1));
-  const ultimo = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 0)).getUTCDate();
-  t.setUTCDate(Math.min(d, ultimo));
+  const t = new Date(Date.UTC(y, m - 1, d + n));
   return t.toISOString().slice(0, 10);
 }
 
@@ -22,7 +20,7 @@ function calcular(monto, plazo, tasa, fechaIni) {
   for (let i = 1; i <= plazo; i++) {
     cuotas.push({
       numero: i,
-      vence: sumarMeses(fechaIni, i),
+      vence: sumarDias(fechaIni, 30 * i),
       monto: i === plazo ? redondear(total - cuota * (plazo - 1)) : cuota,
     });
   }
